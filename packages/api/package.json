@@ -1,0 +1,27 @@
+{
+  "name": "@web-shop/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@trpc/client": "^11.18.0",
+    "@trpc/server": "^11.18.0",
+    "@web-shop/auth": "*",
+    "@web-shop/db": "*",
+    "@web-shop/env": "*",
+    "dotenv": "^17.4.2",
+    "next": "^16.3.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@web-shop/config": "*",
+    "typescript": "^6.0.3"
+  }
+}
