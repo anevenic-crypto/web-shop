@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { KissMark } from "@/components/beauty-doodles";
-
 export default function Footer() {
 	const pathname = usePathname();
 	const year = new Date().getFullYear();
@@ -14,12 +12,11 @@ export default function Footer() {
 	}
 
 	return (
-		<footer className="relative mt-16 overflow-hidden border-t bg-accent/50">
+		<footer className="relative mt-16 overflow-hidden border-t">
 			<div
 				aria-hidden
-				className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-64 bg-[radial-gradient(70%_90%_at_50%_100%,oklch(0.93_0.03_14)_0%,transparent_70%)]"
+				className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-64 bg-[radial-gradient(60%_80%_at_50%_100%,oklch(0.93_0.03_14)_0%,transparent_70%)]"
 			/>
-			<KissMark className="pointer-events-none absolute top-6 right-6 w-14 rotate-12 text-primary/25 sm:w-20" />
 			<div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 sm:grid-cols-2">
 				<div>
 					<p className="font-serif text-2xl">web-shop</p>
@@ -42,7 +39,7 @@ export default function Footer() {
 					</div>
 				</div>
 			</div>
-			<div className="relative border-t px-6 py-6 text-center text-muted-foreground text-xs">
+			<div className="border-t px-6 py-6 text-center text-muted-foreground text-xs">
 				© {year} web-shop. Sva prava zadržana.
 			</div>
 		</footer>
