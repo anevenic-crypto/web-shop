@@ -15,7 +15,6 @@ import Link from "next/link";
 
 import ProductCard from "@/components/product-card";
 
-const DECOR_KISS_MARK = `${env.MINIO_PUBLIC_URL}/${env.MINIO_BUCKET}/decor/kiss-mark.jpg`;
 const DECOR_LIPSTICK_SMEAR = `${env.MINIO_PUBLIC_URL}/${env.MINIO_BUCKET}/decor/lipstick-smear.jpg`;
 
 const WHY_HIGH_END = [
@@ -116,7 +115,7 @@ export default async function Home() {
 			<img
 				src={DECOR_LIPSTICK_SMEAR}
 				alt=""
-				className="pointer-events-none absolute top-0 right-0 w-44 rotate-6 mix-blend-multiply sm:w-64 dark:hidden"
+				className="pointer-events-none absolute top-0 right-0 w-28 rotate-6 mix-blend-multiply sm:w-40 dark:hidden"
 			/>
 
 			<div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-20 md:grid-cols-2 md:py-28">
@@ -145,12 +144,6 @@ export default async function Home() {
 
 				{heroImages.length > 0 && (
 					<div className="fade-in zoom-in-95 relative mx-auto aspect-square w-full max-w-sm animate-in delay-200 duration-700">
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							src={DECOR_KISS_MARK}
-							alt=""
-							className="pointer-events-none absolute -bottom-10 -left-14 w-40 rotate-[-8deg] mix-blend-multiply sm:w-56 dark:hidden"
-						/>
 						{heroImages[1] && (
 							<div className="absolute top-6 -right-4 aspect-square w-2/3 rotate-6 overflow-hidden rounded-3xl shadow-xl ring-4 ring-background">
 								{/* eslint-disable-next-line @next/next/no-img-element */}
