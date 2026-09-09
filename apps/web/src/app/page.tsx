@@ -183,7 +183,7 @@ export default async function Home() {
 		.filter(Boolean);
 
 	return (
-		<div className="relative overflow-hidden">
+		<div className="relative isolate overflow-hidden">
 			<div
 				aria-hidden
 				className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
