@@ -143,7 +143,7 @@ export default async function Home() {
 				</div>
 
 				{heroImages.length > 0 && (
-					<div className="fade-in zoom-in-95 relative mx-auto aspect-square w-full max-w-sm animate-in delay-200 duration-700">
+					<div className="fade-in zoom-in-95 relative mx-auto mt-10 aspect-square w-full max-w-sm animate-in delay-200 duration-700 md:mt-20 md:mr-auto md:ml-0">
 						{heroImages[1] && (
 							<div className="absolute top-6 -right-4 aspect-square w-2/3 rotate-6 overflow-hidden rounded-3xl shadow-xl ring-4 ring-background">
 								{/* eslint-disable-next-line @next/next/no-img-element */}
