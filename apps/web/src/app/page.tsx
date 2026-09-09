@@ -1,5 +1,6 @@
 import { db } from "@web-shop/db";
 import { product, promo } from "@web-shop/db/schema";
+import { env } from "@web-shop/env/server";
 import { Button } from "@web-shop/ui/components/button";
 import { asc, desc, eq } from "drizzle-orm";
 import {
@@ -13,6 +14,9 @@ import {
 import Link from "next/link";
 
 import ProductCard from "@/components/product-card";
+
+const DECOR_KISS_MARK = `${env.MINIO_PUBLIC_URL}/${env.MINIO_BUCKET}/decor/kiss-mark.jpg`;
+const DECOR_LIPSTICK_SMEAR = `${env.MINIO_PUBLIC_URL}/${env.MINIO_BUCKET}/decor/lipstick-smear.jpg`;
 
 const WHY_HIGH_END = [
 	{
@@ -108,6 +112,15 @@ export default async function Home() {
 				/>
 			</div>
 
+			<div className="pointer-events-none absolute top-6 right-4 w-20 rotate-6 overflow-hidden rounded-2xl border-4 border-background shadow-xl sm:right-10 sm:w-28">
+				{/* eslint-disable-next-line @next/next/no-img-element */}
+				<img
+					src={DECOR_LIPSTICK_SMEAR}
+					alt=""
+					className="aspect-[4/5] size-full object-cover"
+				/>
+			</div>
+
 			<div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-20 md:grid-cols-2 md:py-28">
 				<div className="flex flex-col items-center text-center md:items-start md:text-left">
 					<p className="fade-in slide-in-from-bottom-2 animate-in text-primary text-sm uppercase tracking-[0.2em] duration-700">
@@ -134,6 +147,14 @@ export default async function Home() {
 
 				{heroImages.length > 0 && (
 					<div className="fade-in zoom-in-95 relative mx-auto aspect-square w-full max-w-sm animate-in delay-200 duration-700">
+						<div className="absolute -bottom-6 -left-8 w-20 rotate-[-8deg] overflow-hidden rounded-2xl border-4 border-background shadow-xl sm:w-28">
+							{/* eslint-disable-next-line @next/next/no-img-element */}
+							<img
+								src={DECOR_KISS_MARK}
+								alt=""
+								className="aspect-[4/5] size-full object-cover"
+							/>
+						</div>
 						{heroImages[1] && (
 							<div className="absolute top-6 -right-4 aspect-square w-2/3 rotate-6 overflow-hidden rounded-3xl shadow-xl ring-4 ring-background">
 								{/* eslint-disable-next-line @next/next/no-img-element */}
