@@ -4,6 +4,7 @@ import { env } from "@web-shop/env/server";
 import { Button } from "@web-shop/ui/components/button";
 import { asc, desc, eq } from "drizzle-orm";
 import {
+	Check,
 	Clock,
 	FlaskConical,
 	Gem,
@@ -249,7 +250,7 @@ export default async function Home() {
 					<p className="fade-in slide-in-from-bottom-2 animate-in text-primary text-sm uppercase tracking-[0.2em] duration-700">
 						Prestižna kozmetika
 					</p>
-					<h1 className="fade-in slide-in-from-bottom-3 mt-4 animate-in text-balance font-serif text-4xl duration-700 sm:text-6xl">
+					<h1 className="fade-in slide-in-from-bottom-3 mt-4 animate-in text-balance font-black font-serif text-5xl leading-[1.05] duration-700 sm:text-7xl">
 						Šminka koju pamtite,
 						<br />
 						ne samo nosite
@@ -258,6 +259,20 @@ export default async function Home() {
 						Pažljivo odabrani komadi svetskih luksuznih kuća — od ruževa do
 						paleta senki — za trenutke kad želite da izgledate nezaboravno.
 					</p>
+					<ul className="fade-in slide-in-from-bottom-3 mt-5 animate-in space-y-1.5 text-sm delay-200 duration-700">
+						<li className="flex items-center justify-center gap-2 md:justify-start">
+							<Check className="size-4 shrink-0 text-primary" strokeWidth={3} />
+							48+ pažljivo odabranih proizvoda
+						</li>
+						<li className="flex items-center justify-center gap-2 md:justify-start">
+							<Check className="size-4 shrink-0 text-primary" strokeWidth={3} />
+							11 prestižnih svetskih brendova
+						</li>
+						<li className="flex items-center justify-center gap-2 md:justify-start">
+							<Check className="size-4 shrink-0 text-primary" strokeWidth={3} />
+							Nove kolekcije redovno
+						</li>
+					</ul>
 					<Link
 						href="/prodavnica"
 						className="fade-in slide-in-from-bottom-3 mt-8 animate-in delay-300 duration-700"
@@ -270,6 +285,35 @@ export default async function Home() {
 
 				{heroImages.length > 0 && (
 					<div className="fade-in zoom-in-95 relative mx-auto mt-10 aspect-square w-full max-w-sm animate-in delay-200 duration-700 md:mt-20 md:mr-auto md:ml-0">
+						<svg
+							aria-hidden
+							viewBox="0 0 400 400"
+							fill="none"
+							className="pointer-events-none absolute -inset-16 size-[calc(100%+8rem)]"
+						>
+							<title>Dekorativne trake</title>
+							<path
+								d="M-20,120 C80,40 140,220 240,140 S380,40 440,110"
+								stroke="oklch(0.64 0.11 12)"
+								strokeOpacity={0.35}
+								strokeWidth={14}
+								strokeLinecap="round"
+							/>
+							<path
+								d="M-10,300 C100,340 160,200 260,260 S360,360 430,300"
+								stroke="oklch(0.7 0.09 350)"
+								strokeOpacity={0.3}
+								strokeWidth={10}
+								strokeLinecap="round"
+							/>
+							<path
+								d="M40,-10 C60,90 -20,140 60,220"
+								stroke="oklch(0.85 0.04 20)"
+								strokeOpacity={0.5}
+								strokeWidth={16}
+								strokeLinecap="round"
+							/>
+						</svg>
 						{heroImages[1] && (
 							<div className="absolute top-6 -right-4 aspect-square w-2/3 rotate-6 overflow-hidden rounded-3xl shadow-xl ring-4 ring-background">
 								{/* eslint-disable-next-line @next/next/no-img-element */}
