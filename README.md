@@ -27,7 +27,7 @@ npm install
 
 This project uses PostgreSQL with Drizzle ORM.
 
-1. Make sure you have a PostgreSQL database set up.
+1. Make sure you have a PostgreSQL database set up (`npm run db:start` runs one in Docker).
 2. Update your `apps/web/.env` file with your PostgreSQL connection details.
 
 3. Apply the schema to your database:
@@ -36,11 +36,27 @@ This project uses PostgreSQL with Drizzle ORM.
 npm run db:push
 ```
 
-Then, run the development server:
+## Image storage (MinIO)
 
-```bash
-npm run dev
-```
+Product images are stored in [MinIO](https://min.io) (S3-compatible).
+
+- `npm run minio:start` — start MinIO in Docker (console at http://localhost:9001, default
+  credentials `minioadmin` / `minioadmin`, matching `apps/web/.env`).
+- `npm run minio:stop` — stop it.
+- The `product-images` bucket and its public read policy are created automatically on first
+  upload.
+
+## Admin panel
+
+The admin panel (`/admin`) lets you add, edit and remove products, categories and product
+images. To access it:
+
+1. Start Postgres and MinIO (`npm run db:start` and `npm run minio:start`), push the schema,
+   then run the app (`npm run dev`).
+2. Sign up a normal account at [http://localhost:3001/login](http://localhost:3001/login).
+3. Promote that account to admin: run `npm run db:studio`, open the `user` table, and set the
+   `role` column to `admin` for your account.
+4. Open [http://localhost:3001/admin](http://localhost:3001/admin).
 
 Open [http://localhost:3001](http://localhost:3001) in your browser to see the fullstack application.
 
@@ -99,7 +115,8 @@ web-shop/
 │   ├── ui/          # Shared shadcn/ui components and styles
 │   ├── api/         # API layer / business logic
 │   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
+│   ├── db/          # Database schema & queries
+│   └── storage/     # MinIO (S3-compatible) client for product images
 ```
 
 ## Available Scripts
@@ -112,6 +129,7 @@ web-shop/
 - `npm run db:generate`: Generate database client/types
 - `npm run db:migrate`: Run database migrations
 - `npm run db:studio`: Open database studio UI
+- `npm run minio:start` / `npm run minio:stop`: Start/stop the MinIO container for product images
 - `npm run check`: Run Biome formatting and linting
 - `cd apps/web && npm run generate-pwa-assets`: Generate PWA assets
 - `npm run docker:build`: Build the Docker Compose images

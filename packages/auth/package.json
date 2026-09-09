@@ -1,24 +1,24 @@
 {
-  "name": "@web-shop/auth",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "dependencies": {
-    "@web-shop/db": "*",
-    "@web-shop/env": "*",
-    "better-auth": "1.7.1",
-    "dotenv": "^17.4.2",
-    "zod": "^4.4.3"
-  },
-  "devDependencies": {
-    "@web-shop/config": "*",
-    "typescript": "^6.0.3"
-  }
+	"name": "@web-shop/auth",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@web-shop/db": "*",
+		"@web-shop/env": "*",
+		"better-auth": "1.7.1",
+		"dotenv": "^17.4.2",
+		"zod": "^4.4.3"
+	},
+	"devDependencies": {
+		"@web-shop/config": "*",
+		"typescript": "^6.0.3"
+	}
 }
