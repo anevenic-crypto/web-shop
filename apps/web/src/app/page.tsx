@@ -69,6 +69,97 @@ const COMPARISON_ROWS = [
 	},
 ] as const;
 
+const EDGE_CIRCLES = [
+	{
+		top: "2%",
+		side: "left" as const,
+		offset: "-6%",
+		size: 90,
+		color: "oklch(0.93 0.03 14)",
+		opacity: 0.7,
+	},
+	{
+		top: "9%",
+		side: "right" as const,
+		offset: "-8%",
+		size: 240,
+		color: "oklch(0.64 0.11 12)",
+		opacity: 0.14,
+	},
+	{
+		top: "17%",
+		side: "left" as const,
+		offset: "-9%",
+		size: 400,
+		color: "oklch(0.55 0.13 15)",
+		opacity: 0.14,
+	},
+	{
+		top: "26%",
+		side: "right" as const,
+		offset: "4%",
+		size: 55,
+		color: "oklch(0.64 0.11 12)",
+		opacity: 0.45,
+	},
+	{
+		top: "34%",
+		side: "left" as const,
+		offset: "1%",
+		size: 150,
+		color: "oklch(0.85 0.04 20)",
+		opacity: 0.5,
+	},
+	{
+		top: "43%",
+		side: "right" as const,
+		offset: "-6%",
+		size: 320,
+		color: "oklch(0.93 0.03 14)",
+		opacity: 0.5,
+	},
+	{
+		top: "53%",
+		side: "left" as const,
+		offset: "-6%",
+		size: 100,
+		color: "oklch(0.7 0.09 350)",
+		opacity: 0.28,
+	},
+	{
+		top: "63%",
+		side: "right" as const,
+		offset: "3%",
+		size: 200,
+		color: "oklch(0.64 0.11 12)",
+		opacity: 0.18,
+	},
+	{
+		top: "73%",
+		side: "left" as const,
+		offset: "-4%",
+		size: 70,
+		color: "oklch(0.62 0.1 30)",
+		opacity: 0.35,
+	},
+	{
+		top: "83%",
+		side: "right" as const,
+		offset: "-7%",
+		size: 380,
+		color: "oklch(0.55 0.13 15)",
+		opacity: 0.1,
+	},
+	{
+		top: "93%",
+		side: "left" as const,
+		offset: "5%",
+		size: 130,
+		color: "oklch(0.93 0.03 14)",
+		opacity: 0.6,
+	},
+] as const;
+
 export default async function Home() {
 	const [promos, featuredProducts] = await Promise.all([
 		db.query.promo.findMany({
@@ -93,6 +184,26 @@ export default async function Home() {
 
 	return (
 		<div className="relative overflow-hidden">
+			<div
+				aria-hidden
+				className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+			>
+				{EDGE_CIRCLES.map((circle) => (
+					<div
+						key={`${circle.top}-${circle.side}`}
+						className="absolute rounded-full blur-3xl"
+						style={{
+							top: circle.top,
+							[circle.side]: circle.offset,
+							width: circle.size,
+							height: circle.size,
+							backgroundColor: circle.color,
+							opacity: circle.opacity,
+						}}
+					/>
+				))}
+			</div>
+
 			<div
 				aria-hidden
 				className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[820px] overflow-hidden"
