@@ -12,6 +12,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import {
+	KissMark,
+	LashFlourish,
+	LipstickSmudge,
+} from "@/components/beauty-doodles";
 import ProductCard from "@/components/product-card";
 
 const WHY_HIGH_END = [
@@ -107,6 +112,9 @@ export default async function Home() {
 					}}
 				/>
 			</div>
+
+			<LipstickSmudge className="pointer-events-none absolute top-2 right-4 w-28 rotate-12 text-primary/70 sm:right-10 sm:w-40" />
+
 			<div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-20 md:grid-cols-2 md:py-28">
 				<div className="flex flex-col items-center text-center md:items-start md:text-left">
 					<p className="fade-in slide-in-from-bottom-2 animate-in text-primary text-sm uppercase tracking-[0.2em] duration-700">
@@ -133,6 +141,7 @@ export default async function Home() {
 
 				{heroImages.length > 0 && (
 					<div className="fade-in zoom-in-95 relative mx-auto aspect-square w-full max-w-sm animate-in delay-200 duration-700">
+						<LashFlourish className="pointer-events-none absolute -bottom-4 -left-6 w-16 text-primary/50 sm:w-20" />
 						{heroImages[1] && (
 							<div className="absolute top-6 -right-4 aspect-square w-2/3 rotate-6 overflow-hidden rounded-3xl shadow-xl ring-4 ring-background">
 								{/* eslint-disable-next-line @next/next/no-img-element */}
@@ -156,7 +165,8 @@ export default async function Home() {
 			</div>
 
 			<div className="mx-auto max-w-6xl px-6 pb-24">
-				<div className="mb-10 text-center">
+				<div className="relative mb-10 text-center">
+					<KissMark className="pointer-events-none absolute top-0 right-0 w-12 rotate-6 text-primary/25 sm:top-2 sm:right-8 sm:w-16" />
 					<p className="text-primary text-sm uppercase tracking-[0.2em]">
 						Vredi li viša cena
 					</p>
