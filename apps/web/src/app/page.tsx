@@ -67,13 +67,10 @@ const COMPARISON_ROWS = [
 ] as const;
 
 export default async function Home() {
-	const [promos, categories, featuredProducts] = await Promise.all([
+	const [promos, featuredProducts] = await Promise.all([
 		db.query.promo.findMany({
 			where: eq(promo.isPublished, true),
 			orderBy: asc(promo.position),
-		}),
-		db.query.category.findMany({
-			orderBy: (cat, { asc: sortAsc }) => sortAsc(cat.name),
 		}),
 		db.query.product.findMany({
 			where: eq(product.isPublished, true),
@@ -87,22 +84,6 @@ export default async function Home() {
 		}),
 	]);
 
-	const allProductsForTiles = await db.query.product.findMany({
-		where: eq(product.isPublished, true),
-		with: {
-			images: { orderBy: (image, { asc: sortAsc }) => sortAsc(image.position) },
-		},
-	});
-
-	const categoryTiles = categories
-		.map((cat) => {
-			const withImage = allProductsForTiles.find(
-				(p) => p.categoryId === cat.id && p.images[0],
-			);
-			return { ...cat, image: withImage?.images[0]?.url };
-		})
-		.filter((cat) => cat.image);
-
 	const heroImages = featuredProducts
 		.map((p) => p.images[0]?.url)
 		.filter(Boolean);
@@ -111,8 +92,21 @@ export default async function Home() {
 		<div className="relative overflow-hidden">
 			<div
 				aria-hidden
-				className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(60%_60%_at_50%_0%,oklch(0.93_0.03_14)_0%,transparent_70%)]"
-			/>
+				className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[820px] overflow-hidden"
+			>
+				<div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_60%_at_50%_0%,oklch(0.93_0.03_14)_0%,transparent_70%)]" />
+				<div className="absolute -top-32 -left-24 size-[420px] rounded-full bg-primary/25 blur-3xl" />
+				<div className="absolute top-24 -right-20 size-[380px] rounded-full bg-[oklch(0.62_0.1_30)]/20 blur-3xl" />
+				<div className="absolute top-[420px] left-1/4 size-[460px] rounded-full bg-accent/40 blur-3xl" />
+				<div
+					aria-hidden
+					className="absolute inset-0 opacity-[0.035]"
+					style={{
+						backgroundImage:
+							"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+					}}
+				/>
+			</div>
 			<div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-20 md:grid-cols-2 md:py-28">
 				<div className="flex flex-col items-center text-center md:items-start md:text-left">
 					<p className="fade-in slide-in-from-bottom-2 animate-in text-primary text-sm uppercase tracking-[0.2em] duration-700">
@@ -160,32 +154,6 @@ export default async function Home() {
 					</div>
 				)}
 			</div>
-
-			{categoryTiles.length > 0 && (
-				<div className="mx-auto max-w-6xl px-6 pb-24">
-					<div className="-mx-6 flex gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:px-0">
-						{categoryTiles.map((cat, i) => (
-							<Link
-								key={cat.id}
-								href={`/kategorija/${cat.slug}`}
-								style={{ animationDelay: `${i * 60}ms` }}
-								className="group fade-in slide-in-from-bottom-2 relative aspect-square w-40 shrink-0 animate-in overflow-hidden rounded-3xl fill-mode-backwards duration-700 sm:w-auto"
-							>
-								{/* eslint-disable-next-line @next/next/no-img-element */}
-								<img
-									src={cat.image}
-									alt={cat.name}
-									className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
-								/>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
-								<p className="absolute bottom-3 left-3 font-serif text-base text-white">
-									{cat.name}
-								</p>
-							</Link>
-						))}
-					</div>
-				</div>
-			)}
 
 			<div className="mx-auto max-w-6xl px-6 pb-24">
 				<div className="mb-10 text-center">

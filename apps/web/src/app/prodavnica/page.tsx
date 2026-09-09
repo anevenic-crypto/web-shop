@@ -4,10 +4,11 @@ import { desc, eq } from "drizzle-orm";
 
 import CategoryChips from "@/components/category-chips";
 import ProductCard from "@/components/product-card";
+import { getCategoryTilesWithImages } from "@/lib/category-tiles";
 
 export default async function ProdavnicaPage() {
 	const [categories, products] = await Promise.all([
-		db.query.category.findMany({ orderBy: (cat, { asc }) => asc(cat.name) }),
+		getCategoryTilesWithImages(),
 		db.query.product.findMany({
 			where: eq(product.isPublished, true),
 			orderBy: desc(product.createdAt),

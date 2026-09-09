@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import CategoryChips from "@/components/category-chips";
 import ProductCard from "@/components/product-card";
+import { getCategoryTilesWithImages } from "@/lib/category-tiles";
 
 export default async function KategorijaPage({
 	params,
@@ -14,7 +15,7 @@ export default async function KategorijaPage({
 	const { slug } = await params;
 
 	const [categories, activeCategory] = await Promise.all([
-		db.query.category.findMany({ orderBy: (cat, { asc }) => asc(cat.name) }),
+		getCategoryTilesWithImages(),
 		db.query.category.findFirst({ where: eq(category.slug, slug) }),
 	]);
 
