@@ -2,9 +2,69 @@ import { db } from "@web-shop/db";
 import { product, promo } from "@web-shop/db/schema";
 import { Button } from "@web-shop/ui/components/button";
 import { asc, desc, eq } from "drizzle-orm";
+import {
+	Clock,
+	FlaskConical,
+	Gem,
+	Leaf,
+	Sparkles,
+	TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
 
 import ProductCard from "@/components/product-card";
+
+const WHY_HIGH_END = [
+	{
+		icon: Sparkles,
+		title: "Pigment koji se oseti od prvog poteza",
+		text: "Kod luksuznih formula dovoljan je jedan nanos za punu, ujednačenu boju. Kod jeftinije šminke to je obično tri do četiri poteza — i dalje neujednačeno.",
+	},
+	{
+		icon: Leaf,
+		title: "Sastojci koji neguju kožu",
+		text: "Vodeće kuće ulažu u formule sa hijaluronskom kiselinom, uljima i peptidima — šminka koja izgleda dobro i posle 8 sati, umesto da se osuši na licu.",
+	},
+	{
+		icon: Clock,
+		title: "Duže traje, manje trošite",
+		text: "Ruž koji izdrži 16 sati i stotine nanošenja na kraju izađe jeftiniji po upotrebi od tri budžetska ruža koja menjate svaka dva meseca.",
+	},
+	{
+		icon: FlaskConical,
+		title: "Godine razvoja iza svake nijanse",
+		text: "Laboratorije poznatih kuća testiraju formule i po nekoliko godina pre lansiranja — otud ta glatka tekstura koja se ne oseti kao nanesena.",
+	},
+	{
+		icon: Gem,
+		title: "Ambalaža koju čuvate, ne bacate",
+		text: "Metalne futrole, stakleni flakoni, mogućnost dopune — luksuzna šminka je napravljena da stoji na toaletnom stočiću, ne u kanti za smeće.",
+	},
+	{
+		icon: TrendingUp,
+		title: "Zadržava vrednost",
+		text: "Limitirane kolekcije i saradnje poznatih kuća često postanu kolekcionarski komadi — cena im posle nekoliko godina samo raste.",
+	},
+] as const;
+
+const COMPARISON_ROWS = [
+	{ label: "Trajanje preko dana", premium: "12–16 sati", budget: "4–6 sati" },
+	{
+		label: "Pigmentacija",
+		premium: "Puna boja iz jednog poteza",
+		budget: "3+ poteza, neujednačeno",
+	},
+	{
+		label: "Sastojci",
+		premium: "Aktivni sastojci za negu kože",
+		budget: "Uglavnom punila i alkohol",
+	},
+	{
+		label: "Ambalaža",
+		premium: "Metal / staklo, može se dopuniti",
+		budget: "Plastika za jednokratnu upotrebu",
+	},
+] as const;
 
 export default async function Home() {
 	const [promos, categories, featuredProducts] = await Promise.all([
@@ -103,9 +163,6 @@ export default async function Home() {
 
 			{categoryTiles.length > 0 && (
 				<div className="mx-auto max-w-6xl px-6 pb-24">
-					<h2 className="mb-8 text-center font-serif text-2xl sm:text-3xl">
-						Šop po kategoriji
-					</h2>
 					<div className="-mx-6 flex gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:px-0">
 						{categoryTiles.map((cat, i) => (
 							<Link
@@ -129,6 +186,51 @@ export default async function Home() {
 					</div>
 				</div>
 			)}
+
+			<div className="mx-auto max-w-6xl px-6 pb-24">
+				<div className="mb-10 text-center">
+					<p className="text-primary text-sm uppercase tracking-[0.2em]">
+						Vredi li viša cena
+					</p>
+					<h2 className="mt-2 font-serif text-2xl sm:text-3xl">
+						Zašto skupa šminka
+					</h2>
+				</div>
+
+				<div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+					{WHY_HIGH_END.map((item, i) => (
+						<div
+							key={item.title}
+							style={{ animationDelay: `${i * 60}ms` }}
+							className="fade-in slide-in-from-bottom-2 animate-in rounded-3xl border border-border bg-card fill-mode-backwards p-6 shadow-[0_2px_10px_-4px_oklch(0.64_0.11_12_/_0.14)] duration-700"
+						>
+							<item.icon className="size-6 text-primary" />
+							<h3 className="mt-3 font-serif text-lg">{item.title}</h3>
+							<p className="mt-2 text-muted-foreground text-sm leading-relaxed">
+								{item.text}
+							</p>
+						</div>
+					))}
+				</div>
+
+				<div className="mt-6 overflow-hidden rounded-3xl border border-border bg-card shadow-[0_2px_10px_-4px_oklch(0.64_0.11_12_/_0.14)]">
+					<div className="grid grid-cols-3 gap-2 bg-accent/60 px-6 py-4 font-medium text-sm">
+						<span className="text-muted-foreground">Poređenje</span>
+						<span className="text-primary">Skupa šminka</span>
+						<span className="text-muted-foreground">Budžetska šminka</span>
+					</div>
+					{COMPARISON_ROWS.map((row) => (
+						<div
+							key={row.label}
+							className="grid grid-cols-3 gap-2 border-t px-6 py-4 text-sm"
+						>
+							<span className="text-muted-foreground">{row.label}</span>
+							<span className="font-medium">{row.premium}</span>
+							<span className="text-muted-foreground">{row.budget}</span>
+						</div>
+					))}
+				</div>
+			</div>
 
 			{featuredProducts.length > 0 && (
 				<div className="mx-auto max-w-6xl px-6 pb-24">
