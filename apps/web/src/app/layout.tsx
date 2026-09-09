@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 
 import "../index.css";
+import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
 
@@ -39,6 +40,7 @@ export default function RootLayout({
 					<div className="flex min-h-svh flex-col">
 						<Header />
 						<main className="flex-1">{children}</main>
+						<Footer />
 					</div>
 				</Providers>
 			</body>
