@@ -11,7 +11,6 @@ import {
 } from "@web-shop/ui/components/sheet";
 import {
 	Home,
-	LayoutDashboard,
 	Menu,
 	ShieldCheck,
 	ShoppingBag,
@@ -106,20 +105,11 @@ export default function Header() {
 									<ShoppingBag className="size-4 text-primary" />
 									Korpa{cartCount > 0 ? ` (${cartCount})` : ""}
 								</Link>
-								<Link
-									href="/dashboard"
-									className={`${navItemClass} fade-in slide-in-from-left-2 animate-in fill-mode-backwards duration-500`}
-									style={{ animationDelay: "280ms" }}
-									onClick={close}
-								>
-									<LayoutDashboard className="size-4 text-primary" />
-									Dashboard
-								</Link>
 								{session?.user.role === "admin" && (
 									<Link
 										href="/admin"
 										className={`${navItemClass} fade-in slide-in-from-left-2 animate-in fill-mode-backwards duration-500`}
-										style={{ animationDelay: "340ms" }}
+										style={{ animationDelay: "280ms" }}
 										onClick={close}
 									>
 										<ShieldCheck className="size-4 text-primary" />
