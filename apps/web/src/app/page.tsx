@@ -161,7 +161,7 @@ export default async function Home() {
 						Vredi li viša cena
 					</p>
 					<h2 className="mt-2 font-serif text-2xl sm:text-3xl">
-						Zašto skupa šminka
+						Zašto high-end šminka?
 					</h2>
 				</div>
 
