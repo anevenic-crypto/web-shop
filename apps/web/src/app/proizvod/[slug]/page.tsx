@@ -41,7 +41,7 @@ export default async function ProductPage({
 		: [];
 
 	return (
-		<div className="relative overflow-hidden">
+		<div className="relative isolate overflow-hidden">
 			<AmbientBackground />
 			<ProductView product={found} />
 

@@ -37,7 +37,7 @@ export default function KorpaPage() {
 	);
 
 	return (
-		<div className="relative overflow-hidden">
+		<div className="relative isolate overflow-hidden">
 			<AmbientBackground />
 			<div className="mx-auto max-w-3xl px-6 py-16">
 				<h1 className="font-serif text-4xl">Korpa</h1>

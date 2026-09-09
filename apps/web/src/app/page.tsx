@@ -161,22 +161,37 @@ const EDGE_CIRCLES = [
 ] as const;
 
 export default async function Home() {
-	const [promos, featuredProducts] = await Promise.all([
-		db.query.promo.findMany({
-			where: eq(promo.isPublished, true),
-			orderBy: asc(promo.position),
-		}),
-		db.query.product.findMany({
-			where: eq(product.isPublished, true),
-			orderBy: desc(product.createdAt),
-			limit: 8,
-			with: {
-				images: {
-					orderBy: (image, { asc: sortAsc }) => sortAsc(image.position),
+	const [promos, featuredProducts, allPublished, categoryCount] =
+		await Promise.all([
+			db.query.promo.findMany({
+				where: eq(promo.isPublished, true),
+				orderBy: asc(promo.position),
+			}),
+			db.query.product.findMany({
+				where: eq(product.isPublished, true),
+				orderBy: desc(product.createdAt),
+				limit: 8,
+				with: {
+					images: {
+						orderBy: (image, { asc: sortAsc }) => sortAsc(image.position),
+					},
 				},
-			},
-		}),
-	]);
+			}),
+			db.query.product.findMany({
+				where: eq(product.isPublished, true),
+				columns: { brand: true },
+			}),
+			db.query.category.findMany({ columns: { id: true } }),
+		]);
+
+	const stats = [
+		{ value: `${allPublished.length}+`, label: "Proizvoda u ponudi" },
+		{
+			value: `${new Set(allPublished.map((p) => p.brand).filter(Boolean)).size}`,
+			label: "Prestižnih brendova",
+		},
+		{ value: `${categoryCount.length}`, label: "Kategorija za svaki deo lica" },
+	];
 
 	const heroImages = featuredProducts
 		.map((p) => p.images[0]?.url)
@@ -277,7 +292,22 @@ export default async function Home() {
 				)}
 			</div>
 
-			<div className="mx-auto max-w-6xl px-6 pb-24">
+			<div className="border-y bg-card/60 backdrop-blur-sm">
+				<div className="mx-auto grid max-w-4xl grid-cols-3 divide-x px-6 py-10">
+					{stats.map((stat) => (
+						<div key={stat.label} className="text-center">
+							<p className="font-serif text-3xl text-primary sm:text-4xl">
+								{stat.value}
+							</p>
+							<p className="mt-1 text-muted-foreground text-xs sm:text-sm">
+								{stat.label}
+							</p>
+						</div>
+					))}
+				</div>
+			</div>
+
+			<div className="mx-auto max-w-6xl px-6 py-24">
 				<div className="mb-10 text-center">
 					<p className="text-primary text-sm uppercase tracking-[0.2em]">
 						Vredi li viša cena
@@ -355,7 +385,7 @@ export default async function Home() {
 			)}
 
 			{promos.length > 0 && (
-				<div className="mx-auto max-w-6xl px-6 pb-28">
+				<div className="mx-auto max-w-6xl px-6 pb-24">
 					<h2 className="mb-8 text-center font-serif text-2xl sm:text-3xl">
 						Saveti i priče
 					</h2>
@@ -386,6 +416,29 @@ export default async function Home() {
 					</div>
 				</div>
 			)}
+
+			<div className="relative isolate mx-4 mb-16 overflow-hidden rounded-[2.5rem] bg-primary px-6 py-16 text-center text-primary-foreground sm:mx-auto sm:max-w-5xl">
+				<div
+					aria-hidden
+					className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_80%_0%,oklch(1_0_0_/_0.18)_0%,transparent_60%)]"
+				/>
+				<h2 className="font-serif text-3xl sm:text-4xl">
+					Spremni da nadogradite torbicu?
+				</h2>
+				<p className="mx-auto mt-3 max-w-md text-primary-foreground/85">
+					Pogledajte celu kolekciju i pronađite komad koji postaje deo vaše
+					svakodnevne rutine.
+				</p>
+				<Link href="/prodavnica" className="mt-8 inline-block">
+					<Button
+						size="lg"
+						variant="secondary"
+						className="rounded-full bg-background px-8 text-foreground hover:bg-background/90"
+					>
+						Pogledaj celu kolekciju
+					</Button>
+				</Link>
+			</div>
 		</div>
 	);
 }

@@ -18,7 +18,7 @@ export default async function ProdavnicaPage() {
 	]);
 
 	return (
-		<div className="relative overflow-hidden">
+		<div className="relative isolate overflow-hidden">
 			<AmbientBackground />
 			<div className="mx-auto max-w-6xl px-6 py-12">
 				<div className="mb-8 text-center sm:text-left">
