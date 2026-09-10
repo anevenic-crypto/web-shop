@@ -1,7 +1,14 @@
 "use client";
 
 import { Button } from "@web-shop/ui/components/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger,
+} from "@web-shop/ui/components/dialog";
 import { Input } from "@web-shop/ui/components/input";
+import { ZoomIn } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -70,20 +77,47 @@ export default function ProductView({ product }: { product: ProductViewData }) {
 
 	return (
 		<div className="mx-auto grid w-full max-w-4xl gap-10 p-6 md:grid-cols-2 md:p-10">
-			<div className="aspect-square w-full overflow-hidden rounded-3xl bg-muted">
-				{cover ? (
-					// eslint-disable-next-line @next/next/no-img-element
-					<img
-						src={cover.url}
-						alt={product.name}
-						className="size-full object-cover"
-					/>
-				) : (
-					<div className="flex size-full items-center justify-center text-muted-foreground text-sm">
-						Nema slike
-					</div>
+			<Dialog>
+				<DialogTrigger
+					render={
+						<button
+							type="button"
+							disabled={!cover}
+							className="group relative aspect-square w-full overflow-hidden rounded-3xl bg-muted disabled:cursor-default"
+						/>
+					}
+				>
+					{cover ? (
+						<>
+							{/* eslint-disable-next-line @next/next/no-img-element */}
+							<img
+								src={cover.url}
+								alt={product.name}
+								className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+							/>
+							<span className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-full bg-background/85 px-3 py-1.5 text-xs opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+								<ZoomIn className="size-3.5" />
+								Uvećaj
+							</span>
+						</>
+					) : (
+						<div className="flex size-full items-center justify-center text-muted-foreground text-sm">
+							Nema slike
+						</div>
+					)}
+				</DialogTrigger>
+				{cover && (
+					<DialogContent className="max-w-3xl border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-3xl">
+						<DialogTitle className="sr-only">{product.name}</DialogTitle>
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src={cover.url}
+							alt={product.name}
+							className="max-h-[85vh] w-full rounded-2xl object-contain"
+						/>
+					</DialogContent>
 				)}
-			</div>
+			</Dialog>
 
 			<div className="flex flex-col gap-3">
 				{product.category && (

@@ -5,6 +5,7 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { adminProcedure, publicProcedure, router } from "../index";
+import { notifyNewOrder } from "../lib/notify-order";
 
 const orderItemInput = z.object({
 	productId: z.string().optional(),
@@ -52,6 +53,19 @@ export const ordersRouter = router({
 					quantity: item.quantity,
 				})),
 			);
+
+			await notifyNewOrder({
+				id: created.id,
+				customerName: created.customerName,
+				phone: created.phone,
+				address: created.address,
+				note: created.note,
+				totalRsd: created.totalRsd,
+				items: input.items.map((item) => ({
+					...item,
+					variantName: item.variantName ?? null,
+				})),
+			});
 
 			return { id: created.id };
 		}),
