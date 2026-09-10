@@ -17,7 +17,6 @@ import {
 	Search,
 	ShieldCheck,
 	ShoppingBag,
-	Sparkles,
 	Store,
 } from "lucide-react";
 import Link from "next/link";
@@ -77,8 +76,7 @@ export default function Header() {
 								className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-[radial-gradient(80%_60%_at_20%_0%,oklch(0.93_0.03_14)_0%,transparent_70%)]"
 							/>
 							<SheetHeader>
-								<SheetTitle className="fade-in slide-in-from-top-2 flex animate-in items-center gap-2 text-2xl duration-500">
-									<Sparkles className="size-5 text-primary" />
+								<SheetTitle className="fade-in slide-in-from-top-2 animate-in text-2xl duration-500">
 									<Logo />
 								</SheetTitle>
 								<p className="fade-in slide-in-from-top-2 animate-in text-muted-foreground text-xs uppercase tracking-[0.15em] delay-75 duration-500">

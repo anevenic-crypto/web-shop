@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 
 import Logo from "./logo";
 
+const footerButtonClass =
+	"inline-flex w-fit items-center rounded-full border border-border bg-card px-4 py-1.5 text-sm shadow-[0_2px_6px_-2px_oklch(0.64_0.11_12_/_0.2)] transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-[0_6px_14px_-4px_oklch(0.64_0.11_12_/_0.4)] active:translate-y-0";
+
 export default function Footer() {
 	const pathname = usePathname();
 	const year = new Date().getFullYear();
@@ -26,17 +29,17 @@ export default function Footer() {
 						Pažljivo odabrana luksuzna šminka svetskih kuća — za trenutke kad
 						želite da izgledate nezaboravno.
 					</p>
-					<div className="mt-4 flex gap-4 text-muted-foreground text-sm">
+					<div className="mt-4 flex flex-wrap gap-2">
 						{/* biome-ignore lint/a11y/useValidAnchor: društvene mreže još nisu otvorene, mesto rezervisano za budući link */}
-						<a href="#" className="hover:text-primary">
+						<a href="#" className={footerButtonClass}>
 							Instagram
 						</a>
 						{/* biome-ignore lint/a11y/useValidAnchor: društvene mreže još nisu otvorene, mesto rezervisano za budući link */}
-						<a href="#" className="hover:text-primary">
+						<a href="#" className={footerButtonClass}>
 							TikTok
 						</a>
 						{/* biome-ignore lint/a11y/useValidAnchor: društvene mreže još nisu otvorene, mesto rezervisano za budući link */}
-						<a href="#" className="hover:text-primary">
+						<a href="#" className={footerButtonClass}>
 							Facebook
 						</a>
 					</div>
@@ -45,11 +48,11 @@ export default function Footer() {
 					<p className="mb-3 text-muted-foreground text-xs uppercase tracking-[0.15em]">
 						Kupovina
 					</p>
-					<div className="flex flex-col gap-2 text-sm">
-						<Link href="/prodavnica" className="w-fit hover:text-primary">
+					<div className="flex flex-wrap gap-2">
+						<Link href="/prodavnica" className={footerButtonClass}>
 							Cela prodavnica
 						</Link>
-						<Link href="/korpa" className="w-fit hover:text-primary">
+						<Link href="/korpa" className={footerButtonClass}>
 							Korpa
 						</Link>
 					</div>
@@ -58,11 +61,11 @@ export default function Footer() {
 					<p className="mb-3 text-muted-foreground text-xs uppercase tracking-[0.15em]">
 						Informacije
 					</p>
-					<div className="flex flex-col gap-2 text-sm">
-						<Link href="/o-nama" className="w-fit hover:text-primary">
+					<div className="flex flex-wrap gap-2">
+						<Link href="/o-nama" className={footerButtonClass}>
 							O nama
 						</Link>
-						<Link href="/o-nama#kontakt" className="w-fit hover:text-primary">
+						<Link href="/o-nama#kontakt" className={footerButtonClass}>
 							Kontakt
 						</Link>
 					</div>
