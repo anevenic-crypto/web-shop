@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import {
+	Bodoni_Moda,
 	Geist,
 	Geist_Mono,
 	Pinyon_Script,
@@ -32,6 +33,11 @@ const pinyonScript = Pinyon_Script({
 	subsets: ["latin"],
 });
 
+const bodoniModa = Bodoni_Moda({
+	variable: "--font-bodoni-moda",
+	subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
 	title: "Vellure — Prestižna kozmetika",
 	description: "Pažljivo odabrana luksuzna šminka svetskih kuća.",
@@ -45,7 +51,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${pinyonScript.variable} antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${pinyonScript.variable} ${bodoniModa.variable} antialiased`}
 			>
 				<Providers>
 					<div className="flex min-h-svh flex-col">

@@ -250,7 +250,7 @@ export default async function Home() {
 					<p className="fade-in slide-in-from-bottom-2 animate-in text-primary text-sm uppercase tracking-[0.2em] duration-700">
 						Prestižna kozmetika
 					</p>
-					<h1 className="fade-in slide-in-from-bottom-3 mt-4 animate-in text-balance font-black font-serif text-5xl leading-[1.05] duration-700 sm:text-7xl">
+					<h1 className="fade-in slide-in-from-bottom-3 mt-4 animate-in text-balance font-display text-5xl italic leading-[1.05] duration-700 sm:text-7xl">
 						Šminka koju pamtite,
 						<br />
 						ne samo nosite
