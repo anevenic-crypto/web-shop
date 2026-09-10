@@ -2,13 +2,13 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
 	return {
-		name: "web-shop",
-		short_name: "web-shop",
-		description: "my pwa app",
-		start_url: "/new",
+		name: "Vellure",
+		short_name: "Vellure",
+		description: "Prestižna kozmetika — pažljivo odabrana luksuzna šminka.",
+		start_url: "/",
 		display: "standalone",
-		background_color: "#ffffff",
-		theme_color: "#000000",
+		background_color: "#fdf5f6",
+		theme_color: "#c56f7a",
 		icons: [
 			{
 				src: "/favicon/web-app-manifest-192x192.png",

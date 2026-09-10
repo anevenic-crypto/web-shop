@@ -83,6 +83,10 @@ export function updateCartQuantity(
 	return writeCart(cart);
 }
 
+export function clearCart() {
+	return writeCart([]);
+}
+
 export function subscribeToCart(callback: () => void) {
 	window.addEventListener(CART_EVENT, callback);
 	window.addEventListener("storage", callback);

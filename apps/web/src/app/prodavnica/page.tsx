@@ -1,17 +1,29 @@
 import { db } from "@web-shop/db";
 import { product } from "@web-shop/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, ilike, or } from "drizzle-orm";
+import Link from "next/link";
 
 import AmbientBackground from "@/components/ambient-background";
 import CategoryChips from "@/components/category-chips";
 import ProductCard from "@/components/product-card";
 import { getCategoryTilesWithImages } from "@/lib/category-tiles";
 
-export default async function ProdavnicaPage() {
+export default async function ProdavnicaPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ q?: string }>;
+}) {
+	const { q } = await searchParams;
+
 	const [categories, products] = await Promise.all([
 		getCategoryTilesWithImages(),
 		db.query.product.findMany({
-			where: eq(product.isPublished, true),
+			where: q
+				? and(
+						eq(product.isPublished, true),
+						or(ilike(product.name, `%${q}%`), ilike(product.brand, `%${q}%`)),
+					)
+				: eq(product.isPublished, true),
 			orderBy: desc(product.createdAt),
 			with: { images: { orderBy: (image, { asc }) => asc(image.position) } },
 		}),
@@ -27,8 +39,24 @@ export default async function ProdavnicaPage() {
 					</p>
 					<h1 className="mt-2 font-serif text-4xl">Cela prodavnica</h1>
 					<p className="mt-2 text-muted-foreground">
-						{products.length} {products.length === 1 ? "proizvod" : "proizvoda"}{" "}
-						spremno da vas oduševi.
+						{q ? (
+							<>
+								{products.length}{" "}
+								{products.length === 1 ? "rezultat" : "rezultata"} za "{q}" —{" "}
+								<Link
+									href="/prodavnica"
+									className="text-primary hover:underline"
+								>
+									obriši pretragu
+								</Link>
+							</>
+						) : (
+							<>
+								{products.length}{" "}
+								{products.length === 1 ? "proizvod" : "proizvoda"} spremno da
+								vas oduševi.
+							</>
+						)}
 					</p>
 				</div>
 
@@ -38,7 +66,9 @@ export default async function ProdavnicaPage() {
 
 				{products.length === 0 ? (
 					<p className="text-muted-foreground">
-						Trenutno nema dostupnih proizvoda.
+						{q
+							? "Nema proizvoda koji odgovaraju pretrazi."
+							: "Trenutno nema dostupnih proizvoda."}
 					</p>
 				) : (
 					<div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">

@@ -22,8 +22,8 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-	title: "web-shop",
-	description: "web-shop",
+	title: "Vellure — Prestižna kozmetika",
+	description: "Pažljivo odabrana luksuzna šminka svetskih kuća.",
 };
 
 export default function RootLayout({

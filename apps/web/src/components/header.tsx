@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@web-shop/ui/components/button";
+import { Input } from "@web-shop/ui/components/input";
 import {
 	Sheet,
 	SheetContent,
@@ -11,17 +12,22 @@ import {
 } from "@web-shop/ui/components/sheet";
 import {
 	Home,
+	Info,
 	Menu,
+	Search,
 	ShieldCheck,
 	ShoppingBag,
 	Sparkles,
 	Store,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { getCartCount, subscribeToCart } from "@/lib/cart";
 import { trpc } from "@/utils/trpc";
+
+import Logo from "./logo";
 
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
@@ -30,12 +36,15 @@ const navItemClass =
 	"flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all hover:translate-x-1 hover:bg-accent hover:text-accent-foreground";
 
 export default function Header() {
+	const router = useRouter();
 	const { data: session } = authClient.useSession();
 	const { data: categories } = useQuery(
 		trpc.categories.listPublic.queryOptions(),
 	);
 	const [open, setOpen] = useState(false);
 	const [cartCount, setCartCount] = useState(0);
+	const [searchOpen, setSearchOpen] = useState(false);
+	const [query, setQuery] = useState("");
 
 	useEffect(() => {
 		const refresh = () => setCartCount(getCartCount());
@@ -68,9 +77,9 @@ export default function Header() {
 								className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-[radial-gradient(80%_60%_at_20%_0%,oklch(0.93_0.03_14)_0%,transparent_70%)]"
 							/>
 							<SheetHeader>
-								<SheetTitle className="fade-in slide-in-from-top-2 flex animate-in items-center gap-2 font-serif text-2xl duration-500">
+								<SheetTitle className="fade-in slide-in-from-top-2 flex animate-in items-center gap-2 text-2xl duration-500">
 									<Sparkles className="size-5 text-primary" />
-									web-shop
+									<Logo />
 								</SheetTitle>
 								<p className="fade-in slide-in-from-top-2 animate-in text-muted-foreground text-xs uppercase tracking-[0.15em] delay-75 duration-500">
 									Prestižna kozmetika
@@ -105,11 +114,19 @@ export default function Header() {
 									<ShoppingBag className="size-4 text-primary" />
 									Korpa{cartCount > 0 ? ` (${cartCount})` : ""}
 								</Link>
+								<Link
+									href="/o-nama"
+									className={`${navItemClass} fade-in slide-in-from-left-2 animate-in fill-mode-backwards duration-500`}
+									style={{ animationDelay: "280ms" }}
+									onClick={close}
+								>
+									<Info className="size-4 text-primary" />O nama
+								</Link>
 								{session?.user.role === "admin" && (
 									<Link
 										href="/admin"
 										className={`${navItemClass} fade-in slide-in-from-left-2 animate-in fill-mode-backwards duration-500`}
-										style={{ animationDelay: "280ms" }}
+										style={{ animationDelay: "340ms" }}
 										onClick={close}
 									>
 										<ShieldCheck className="size-4 text-primary" />
@@ -140,11 +157,43 @@ export default function Header() {
 							)}
 						</SheetContent>
 					</Sheet>
-					<Link href="/" className="font-serif text-xl tracking-tight">
-						web-shop
+					<Link href="/">
+						<Logo className="text-xl" />
 					</Link>
 				</div>
 				<div className="flex items-center gap-1">
+					{searchOpen ? (
+						<form
+							onSubmit={(e) => {
+								e.preventDefault();
+								if (query.trim()) {
+									router.push(
+										`/prodavnica?q=${encodeURIComponent(query.trim())}`,
+									);
+									setSearchOpen(false);
+								}
+							}}
+							className="flex items-center"
+						>
+							<Input
+								autoFocus
+								value={query}
+								onChange={(e) => setQuery(e.target.value)}
+								onBlur={() => !query && setSearchOpen(false)}
+								placeholder="Pretraži proizvode..."
+								className="h-8 w-40 sm:w-56"
+							/>
+						</form>
+					) : (
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={() => setSearchOpen(true)}
+							aria-label="Pretraga"
+						>
+							<Search className="size-5" />
+						</Button>
+					)}
 					<Link href="/korpa">
 						<Button variant="ghost" size="icon" className="relative">
 							<ShoppingBag className="size-5" />

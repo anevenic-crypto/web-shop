@@ -143,6 +143,10 @@ export default function ProductView({ product }: { product: ProductViewData }) {
 				<p className="mt-4 text-sm">
 					{outOfStock ? (
 						<span className="text-destructive">Nema na stanju</span>
+					) : availableStock <= 3 ? (
+						<span className="font-medium text-[oklch(0.6_0.15_40)]">
+							Samo još {availableStock} na stanju!
+						</span>
 					) : (
 						<span>Na stanju: {availableStock}</span>
 					)}

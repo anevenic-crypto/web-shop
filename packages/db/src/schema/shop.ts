@@ -105,6 +105,61 @@ export const promo = pgTable("promo", {
 		.notNull(),
 });
 
+export const order = pgTable("order", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	customerName: text("customer_name").notNull(),
+	phone: text("phone").notNull(),
+	address: text("address").notNull(),
+	note: text("note"),
+	totalRsd: integer("total_rsd").notNull(),
+	status: text("status").default("novo").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const orderItem = pgTable(
+	"order_item",
+	{
+		id: text("id")
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		orderId: text("order_id")
+			.notNull()
+			.references(() => order.id, { onDelete: "cascade" }),
+		productId: text("product_id").references(() => product.id, {
+			onDelete: "set null",
+		}),
+		name: text("name").notNull(),
+		variantName: text("variant_name"),
+		priceRsd: integer("price_rsd").notNull(),
+		quantity: integer("quantity").notNull(),
+	},
+	(table) => [index("orderItem_orderId_idx").on(table.orderId)],
+);
+
+export const contactMessage = pgTable("contact_message", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	name: text("name").notNull(),
+	email: text("email").notNull(),
+	message: text("message").notNull(),
+	isRead: boolean("is_read").default(false).notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const orderRelations = relations(order, ({ many }) => ({
+	items: many(orderItem),
+}));
+
+export const orderItemRelations = relations(orderItem, ({ one }) => ({
+	order: one(order, {
+		fields: [orderItem.orderId],
+		references: [order.id],
+	}),
+}));
+
 export const categoryRelations = relations(category, ({ many }) => ({
 	products: many(product),
 }));

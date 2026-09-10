@@ -50,8 +50,14 @@ export default function ProductCard({
 				<p className="mt-1 font-semibold text-primary">
 					{formatRsd(product.priceRsd)}
 				</p>
-				{product.stock <= 0 && (
+				{product.stock <= 0 ? (
 					<p className="text-destructive text-xs">Nema na stanju</p>
+				) : (
+					product.stock <= 3 && (
+						<p className="font-medium text-[oklch(0.6_0.15_40)] text-xs">
+							Samo još {product.stock} na stanju!
+						</p>
+					)
 				)}
 			</div>
 		</Link>
