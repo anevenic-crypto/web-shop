@@ -1,12 +1,58 @@
 import { db } from "@web-shop/db";
 import { product } from "@web-shop/db/schema";
 import { and, eq, gt, ne, sql } from "drizzle-orm";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 import AmbientBackground from "@/components/ambient-background";
 import ProductCard from "@/components/product-card";
 
 import ProductView from "./product-view";
+
+function formatRsd(price: number) {
+	return `${price.toLocaleString("sr-RS")} RSD`;
+}
+
+const getProduct = cache(async (slug: string) => {
+	return db.query.product.findFirst({
+		where: and(eq(product.slug, slug), eq(product.isPublished, true)),
+		with: {
+			category: true,
+			images: { orderBy: (image, { asc }) => asc(image.position) },
+			variants: { orderBy: (variant, { asc }) => asc(variant.position) },
+		},
+	});
+});
+
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+	const { slug } = await params;
+	const found = await getProduct(slug);
+
+	if (!found) {
+		return { title: "Proizvod nije pronađen — Vellure" };
+	}
+
+	const title = `${found.name} — Vellure`;
+	const description = found.description
+		? found.description
+		: `${found.brand ? `${found.brand} — ` : ""}${formatRsd(found.priceRsd)}. Pogledajte na Vellure, prestižnoj kozmetici za trenutke kad želite da izgledate nezaboravno.`;
+	const image = found.images[0]?.url;
+
+	return {
+		title,
+		description,
+		openGraph: {
+			title,
+			description,
+			images: image ? [{ url: image, alt: found.name }] : undefined,
+		},
+	};
+}
 
 export default async function ProductPage({
 	params,
@@ -15,14 +61,7 @@ export default async function ProductPage({
 }) {
 	const { slug } = await params;
 
-	const found = await db.query.product.findFirst({
-		where: and(eq(product.slug, slug), eq(product.isPublished, true)),
-		with: {
-			category: true,
-			images: { orderBy: (image, { asc }) => asc(image.position) },
-			variants: { orderBy: (variant, { asc }) => asc(variant.position) },
-		},
-	});
+	const found = await getProduct(slug);
 
 	if (!found) {
 		notFound();
