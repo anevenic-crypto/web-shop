@@ -1,19 +1,30 @@
 import { db } from "@web-shop/db";
 import { category, product } from "@web-shop/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import AmbientBackground from "@/components/ambient-background";
 import CategoryChips from "@/components/category-chips";
 import ProductCard from "@/components/product-card";
+import ProductFilters from "@/components/product-filters";
 import { getCategoryTilesWithImages } from "@/lib/category-tiles";
+
+const SORTS = {
+	"price-asc": asc(product.priceRsd),
+	"price-desc": desc(product.priceRsd),
+	newest: desc(product.createdAt),
+} as const;
 
 export default async function KategorijaPage({
 	params,
+	searchParams,
 }: {
 	params: Promise<{ slug: string }>;
+	searchParams: Promise<{ brand?: string; sort?: string }>;
 }) {
 	const { slug } = await params;
+	const { brand, sort } = await searchParams;
 
 	const [categories, activeCategory] = await Promise.all([
 		getCategoryTilesWithImages(),
@@ -24,14 +35,34 @@ export default async function KategorijaPage({
 		notFound();
 	}
 
-	const products = await db.query.product.findMany({
-		where: and(
-			eq(product.categoryId, activeCategory.id),
-			eq(product.isPublished, true),
+	const [products, brandRows] = await Promise.all([
+		db.query.product.findMany({
+			where: and(
+				eq(product.categoryId, activeCategory.id),
+				eq(product.isPublished, true),
+				brand ? eq(product.brand, brand) : undefined,
+			),
+			orderBy: SORTS[sort as keyof typeof SORTS] ?? SORTS.newest,
+			with: {
+				images: {
+					orderBy: (image, { asc: sortAsc }) => sortAsc(image.position),
+				},
+			},
+		}),
+		db.query.product.findMany({
+			where: and(
+				eq(product.categoryId, activeCategory.id),
+				eq(product.isPublished, true),
+			),
+			columns: { brand: true },
+		}),
+	]);
+
+	const brands = [
+		...new Set(
+			brandRows.map((p) => p.brand).filter((b): b is string => Boolean(b)),
 		),
-		orderBy: desc(product.createdAt),
-		with: { images: { orderBy: (image, { asc }) => asc(image.position) } },
-	});
+	].sort((a, b) => a.localeCompare(b));
 
 	return (
 		<div className="relative isolate overflow-hidden">
@@ -48,11 +79,17 @@ export default async function KategorijaPage({
 					</p>
 				</div>
 
-				<div className="mb-10">
+				<div className="mb-6">
 					<CategoryChips
 						categories={categories}
 						activeSlug={activeCategory.slug}
 					/>
+				</div>
+
+				<div className="mb-10">
+					<Suspense fallback={null}>
+						<ProductFilters brands={brands} />
+					</Suspense>
 				</div>
 
 				{products.length === 0 ? (

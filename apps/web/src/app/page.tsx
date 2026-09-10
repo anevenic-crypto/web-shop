@@ -185,12 +185,12 @@ export default async function Home() {
 			db.query.category.findMany({ columns: { id: true } }),
 		]);
 
+	const brandCount = new Set(allPublished.map((p) => p.brand).filter(Boolean))
+		.size;
+
 	const stats = [
 		{ value: `${allPublished.length}+`, label: "Proizvoda u ponudi" },
-		{
-			value: `${new Set(allPublished.map((p) => p.brand).filter(Boolean)).size}`,
-			label: "Prestižnih brendova",
-		},
+		{ value: `${brandCount}`, label: "Prestižnih brendova" },
 		{ value: `${categoryCount.length}`, label: "Kategorija za svaki deo lica" },
 	];
 
@@ -262,11 +262,11 @@ export default async function Home() {
 					<ul className="fade-in slide-in-from-bottom-3 mt-5 animate-in space-y-1.5 text-sm delay-200 duration-700">
 						<li className="flex items-center justify-center gap-2 md:justify-start">
 							<Check className="size-4 shrink-0 text-primary" strokeWidth={3} />
-							48+ pažljivo odabranih proizvoda
+							{allPublished.length}+ pažljivo odabranih proizvoda
 						</li>
 						<li className="flex items-center justify-center gap-2 md:justify-start">
 							<Check className="size-4 shrink-0 text-primary" strokeWidth={3} />
-							11 prestižnih svetskih brendova
+							{brandCount} prestižnih svetskih brendova
 						</li>
 						<li className="flex items-center justify-center gap-2 md:justify-start">
 							<Check className="size-4 shrink-0 text-primary" strokeWidth={3} />

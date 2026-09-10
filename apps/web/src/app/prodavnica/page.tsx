@@ -1,33 +1,56 @@
 import { db } from "@web-shop/db";
 import { product } from "@web-shop/db/schema";
-import { and, desc, eq, ilike, or } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or } from "drizzle-orm";
 import Link from "next/link";
+import { Suspense } from "react";
 
 import AmbientBackground from "@/components/ambient-background";
 import CategoryChips from "@/components/category-chips";
 import ProductCard from "@/components/product-card";
+import ProductFilters from "@/components/product-filters";
 import { getCategoryTilesWithImages } from "@/lib/category-tiles";
+
+const SORTS = {
+	"price-asc": asc(product.priceRsd),
+	"price-desc": desc(product.priceRsd),
+	newest: desc(product.createdAt),
+} as const;
 
 export default async function ProdavnicaPage({
 	searchParams,
 }: {
-	searchParams: Promise<{ q?: string }>;
+	searchParams: Promise<{ q?: string; brand?: string; sort?: string }>;
 }) {
-	const { q } = await searchParams;
+	const { q, brand, sort } = await searchParams;
 
-	const [categories, products] = await Promise.all([
+	const [categories, products, brandRows] = await Promise.all([
 		getCategoryTilesWithImages(),
 		db.query.product.findMany({
-			where: q
-				? and(
-						eq(product.isPublished, true),
-						or(ilike(product.name, `%${q}%`), ilike(product.brand, `%${q}%`)),
-					)
-				: eq(product.isPublished, true),
-			orderBy: desc(product.createdAt),
-			with: { images: { orderBy: (image, { asc }) => asc(image.position) } },
+			where: and(
+				eq(product.isPublished, true),
+				q
+					? or(ilike(product.name, `%${q}%`), ilike(product.brand, `%${q}%`))
+					: undefined,
+				brand ? eq(product.brand, brand) : undefined,
+			),
+			orderBy: SORTS[sort as keyof typeof SORTS] ?? SORTS.newest,
+			with: {
+				images: {
+					orderBy: (image, { asc: sortAsc }) => sortAsc(image.position),
+				},
+			},
+		}),
+		db.query.product.findMany({
+			where: eq(product.isPublished, true),
+			columns: { brand: true },
 		}),
 	]);
+
+	const brands = [
+		...new Set(
+			brandRows.map((p) => p.brand).filter((b): b is string => Boolean(b)),
+		),
+	].sort((a, b) => a.localeCompare(b));
 
 	return (
 		<div className="relative isolate overflow-hidden">
@@ -60,8 +83,14 @@ export default async function ProdavnicaPage({
 					</p>
 				</div>
 
-				<div className="mb-10">
+				<div className="mb-6">
 					<CategoryChips categories={categories} />
+				</div>
+
+				<div className="mb-10">
+					<Suspense fallback={null}>
+						<ProductFilters brands={brands} />
+					</Suspense>
 				</div>
 
 				{products.length === 0 ? (
