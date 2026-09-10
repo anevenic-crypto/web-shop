@@ -4,20 +4,22 @@ function LogoMark() {
 	return (
 		<span
 			aria-hidden
-			className="relative inline-flex shrink-0 items-center justify-center rounded-[0.55em] text-white"
+			className="relative inline-flex shrink-0 items-center justify-center rounded-full"
 			style={{
-				width: "1.7em",
-				height: "1.7em",
+				width: "1.3em",
+				height: "1.3em",
 				background:
-					"linear-gradient(155deg, oklch(0.78 0.15 350) 0%, oklch(0.6 0.21 8) 55%, oklch(0.38 0.17 6) 100%)",
+					"radial-gradient(120% 120% at 30% 20%, oklch(0.995 0.006 15) 0%, oklch(0.96 0.025 12) 100%)",
+				border: "1px solid oklch(0.9 0.045 10)",
 				boxShadow:
-					"inset 0 1px 1px oklch(1 0 0 / 0.55), inset 0 -3px 4px oklch(0.3 0.15 6 / 0.55), 0 0.14em 0 oklch(0.34 0.14 6), 0 0.4em 0.6em -0.2em oklch(0.5 0.2 8 / 0.6)",
+					"inset 0 1px 1px oklch(1 0 0 / 0.9), inset 0 -0.1em 0.15em oklch(0.88 0.05 10 / 0.5), 0 0.1em 0.2em -0.08em oklch(0.64 0.11 12 / 0.4)",
 			}}
 		>
 			<span
-				className="font-serif text-[0.62em] leading-none"
+				className="font-script text-[1.15em] leading-none"
 				style={{
-					textShadow: "0 1px 1px oklch(0.3 0.1 6 / 0.9)",
+					color: "oklch(0.44 0.2 8)",
+					transform: "translate(0.02em, 0.05em)",
 				}}
 			>
 				V

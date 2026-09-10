@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
+import {
+	Geist,
+	Geist_Mono,
+	Pinyon_Script,
+	Playfair_Display,
+} from "next/font/google";
 
 import "../index.css";
 import Footer from "@/components/footer";
@@ -21,6 +26,12 @@ const playfairDisplay = Playfair_Display({
 	subsets: ["latin"],
 });
 
+const pinyonScript = Pinyon_Script({
+	variable: "--font-pinyon-script",
+	weight: "400",
+	subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
 	title: "Vellure — Prestižna kozmetika",
 	description: "Pažljivo odabrana luksuzna šminka svetskih kuća.",
@@ -34,7 +45,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${pinyonScript.variable} antialiased`}
 			>
 				<Providers>
 					<div className="flex min-h-svh flex-col">
