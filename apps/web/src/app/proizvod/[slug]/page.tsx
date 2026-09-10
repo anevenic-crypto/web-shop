@@ -1,6 +1,6 @@
 import { db } from "@web-shop/db";
 import { product } from "@web-shop/db/schema";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, gt, ne, sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 import AmbientBackground from "@/components/ambient-background";
@@ -33,8 +33,10 @@ export default async function ProductPage({
 				where: and(
 					eq(product.categoryId, found.categoryId),
 					eq(product.isPublished, true),
+					gt(product.stock, 0),
 					ne(product.id, found.id),
 				),
+				orderBy: sql`random()`,
 				limit: 4,
 				with: { images: { orderBy: (image, { asc }) => asc(image.position) } },
 			})
