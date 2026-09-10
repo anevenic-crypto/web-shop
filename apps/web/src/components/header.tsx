@@ -10,19 +10,10 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@web-shop/ui/components/sheet";
-import {
-	Home,
-	Info,
-	Menu,
-	Search,
-	ShieldCheck,
-	ShoppingBag,
-	Store,
-} from "lucide-react";
+import { Home, Info, Menu, Search, ShoppingBag, Store } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { type FormEvent, useEffect, useState } from "react";
 import { getCartCount, subscribeToCart } from "@/lib/cart";
 import { trpc } from "@/utils/trpc";
 
@@ -36,7 +27,6 @@ const navItemClass =
 
 export default function Header() {
 	const router = useRouter();
-	const { data: session } = authClient.useSession();
 	const { data: categories } = useQuery(
 		trpc.categories.listPublic.queryOptions(),
 	);
@@ -53,9 +43,17 @@ export default function Header() {
 
 	const close = () => setOpen(false);
 
+	const submitSearch = (e: FormEvent) => {
+		e.preventDefault();
+		if (query.trim()) {
+			router.push(`/prodavnica?q=${encodeURIComponent(query.trim())}`);
+			setSearchOpen(false);
+		}
+	};
+
 	return (
 		<div className="sticky top-0 z-40 border-border/60 border-b bg-background/80 backdrop-blur-md">
-			<div className="flex flex-row items-center justify-between px-4 py-3">
+			<div className="flex flex-row items-center gap-4 px-4 py-3">
 				<div className="flex items-center gap-3">
 					<Sheet open={open} onOpenChange={setOpen}>
 						<SheetTrigger
@@ -120,17 +118,6 @@ export default function Header() {
 								>
 									<Info className="size-4 text-primary" />O nama
 								</Link>
-								{session?.user.role === "admin" && (
-									<Link
-										href="/admin"
-										className={`${navItemClass} fade-in slide-in-from-left-2 animate-in fill-mode-backwards duration-500`}
-										style={{ animationDelay: "340ms" }}
-										onClick={close}
-									>
-										<ShieldCheck className="size-4 text-primary" />
-										Admin
-									</Link>
-								)}
 							</nav>
 
 							{!!categories?.length && (
@@ -159,19 +146,25 @@ export default function Header() {
 						<Logo className="text-xl" />
 					</Link>
 				</div>
-				<div className="flex items-center gap-1">
+
+				<form
+					onSubmit={submitSearch}
+					className="relative hidden max-w-md flex-1 sm:block"
+				>
+					<Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
+					<Input
+						value={query}
+						onChange={(e) => setQuery(e.target.value)}
+						placeholder="Pretraži proizvode, brendove, nijanse..."
+						className="rounded-full border-primary/20 bg-card pl-10 shadow-[0_2px_8px_-2px_oklch(0.64_0.11_12_/_0.2)]"
+					/>
+				</form>
+
+				<div className="ml-auto flex items-center gap-1">
 					{searchOpen ? (
 						<form
-							onSubmit={(e) => {
-								e.preventDefault();
-								if (query.trim()) {
-									router.push(
-										`/prodavnica?q=${encodeURIComponent(query.trim())}`,
-									);
-									setSearchOpen(false);
-								}
-							}}
-							className="flex items-center"
+							onSubmit={submitSearch}
+							className="flex items-center sm:hidden"
 						>
 							<Input
 								autoFocus
@@ -179,7 +172,7 @@ export default function Header() {
 								onChange={(e) => setQuery(e.target.value)}
 								onBlur={() => !query && setSearchOpen(false)}
 								placeholder="Pretraži proizvode..."
-								className="h-8 w-40 sm:w-56"
+								className="h-8 w-40"
 							/>
 						</form>
 					) : (
@@ -188,6 +181,7 @@ export default function Header() {
 							size="icon"
 							onClick={() => setSearchOpen(true)}
 							aria-label="Pretraga"
+							className="sm:hidden"
 						>
 							<Search className="size-5" />
 						</Button>
