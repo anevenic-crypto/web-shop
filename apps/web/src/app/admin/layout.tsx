@@ -33,6 +33,7 @@ export default async function AdminLayout({
 				<Link href="/admin/promos">Reklame i tekstovi</Link>
 				<Link href="/admin/porudzbine">Porudžbine</Link>
 				<Link href="/admin/poruke">Poruke</Link>
+				<Link href="/admin/razgovori">AI razgovori</Link>
 			</nav>
 			{children}
 		</div>

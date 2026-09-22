@@ -13,7 +13,12 @@ export const minioClient = new Client({
 });
 
 export function getPublicUrl(key: string) {
-	return `${env.MINIO_PUBLIC_URL}/${PRODUCT_IMAGES_BUCKET}/${key}`;
+	// Lokalni MinIO: http://localhost:9000/<bucket>/<key>
+	// Cloudflare R2 javni URL već pokazuje na bucket: https://pub-xxx.r2.dev/<key>
+	const base = env.MINIO_PUBLIC_URL.replace(/\/$/, "");
+	return env.MINIO_PUBLIC_URL_HAS_BUCKET
+		? `${base}/${key}`
+		: `${base}/${PRODUCT_IMAGES_BUCKET}/${key}`;
 }
 
 let ensured: Promise<void> | null = null;
@@ -38,10 +43,11 @@ function ensureBucket() {
 					},
 				],
 			};
-			await minioClient.setBucketPolicy(
-				PRODUCT_IMAGES_BUCKET,
-				JSON.stringify(policy),
-			);
+			// Cloudflare R2 (i neki drugi S3 servisi) ne podržavaju bucket policy preko API-ja;
+			// tamo se javni pristup uključuje u njihovom panelu, pa grešku samo ignorišemo.
+			await minioClient
+				.setBucketPolicy(PRODUCT_IMAGES_BUCKET, JSON.stringify(policy))
+				.catch(() => undefined);
 		})().catch((error) => {
 			ensured = null;
 			throw error;

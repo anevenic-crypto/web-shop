@@ -20,6 +20,10 @@ export const env = createEnv({
 		MINIO_SECRET_KEY: z.string().min(1),
 		MINIO_BUCKET: z.string().min(1).default("product-images"),
 		MINIO_PUBLIC_URL: z.url(),
+		MINIO_PUBLIC_URL_HAS_BUCKET: z
+			.enum(["true", "false"])
+			.default("false")
+			.transform((value) => value === "true"),
 		RESEND_API_KEY: z.string().min(1).optional(),
 		ORDER_NOTIFICATION_EMAIL: z.email().optional(),
 	},

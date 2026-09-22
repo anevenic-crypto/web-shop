@@ -186,3 +186,41 @@ export const productVariantRelations = relations(productVariant, ({ one }) => ({
 		references: [product.id],
 	}),
 }));
+
+// ---------- AI chat (razgovori kupaca sa asistentom) ----------
+
+export const chatConversation = pgTable("chat_conversation", {
+	id: text("id").primaryKey(),
+	preview: text("preview"),
+	messageCount: integer("message_count").default(0).notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const chatMessage = pgTable(
+	"chat_message",
+	{
+		id: text("id").primaryKey(),
+		conversationId: text("conversation_id")
+			.notNull()
+			.references(() => chatConversation.id, { onDelete: "cascade" }),
+		role: text("role").notNull(), // "user" | "assistant"
+		content: text("content").notNull(),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => [index("chatMessage_conversationId_idx").on(table.conversationId)],
+);
+
+export const chatConversationRelations = relations(
+	chatConversation,
+	({ many }) => ({
+		messages: many(chatMessage),
+	}),
+);
+
+export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
+	conversation: one(chatConversation, {
+		fields: [chatMessage.conversationId],
+		references: [chatConversation.id],
+	}),
+}));

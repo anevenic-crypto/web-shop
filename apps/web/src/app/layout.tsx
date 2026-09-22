@@ -8,6 +8,7 @@ import {
 } from "next/font/google";
 
 import "../index.css";
+import ChatWidget from "@/components/chat-widget";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
@@ -59,6 +60,7 @@ export default function RootLayout({
 						<main className="flex-1">{children}</main>
 						<Footer />
 					</div>
+					<ChatWidget />
 				</Providers>
 			</body>
 		</html>
