@@ -10,7 +10,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@web-shop/ui/components/sheet";
-import { Home, Info, Menu, Search, ShoppingBag, Store } from "lucide-react";
+import { Home, Info, Menu, Search, ShoppingBag, Sparkles, Store } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
@@ -111,9 +111,18 @@ export default function Header() {
 									Korpa{cartCount > 0 ? ` (${cartCount})` : ""}
 								</Link>
 								<Link
-									href="/o-nama"
+									href="/ritual"
 									className={`${navItemClass} fade-in slide-in-from-left-2 animate-in fill-mode-backwards duration-500`}
 									style={{ animationDelay: "280ms" }}
+									onClick={close}
+								>
+									<Sparkles className="size-4 text-primary" />
+									Pronađi svoj ritual
+								</Link>
+								<Link
+									href="/o-nama"
+									className={`${navItemClass} fade-in slide-in-from-left-2 animate-in fill-mode-backwards duration-500`}
+									style={{ animationDelay: "340ms" }}
 									onClick={close}
 								>
 									<Info className="size-4 text-primary" />O nama

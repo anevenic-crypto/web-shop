@@ -396,6 +396,36 @@ export default async function Home() {
 				</div>
 			</div>
 
+			{/* Pronađi svoj ritual — kviz */}
+			<div className="mx-auto max-w-6xl px-6 pb-20">
+				<Link
+					href="/ritual"
+					className="group relative block overflow-hidden rounded-3xl border border-primary/20 bg-card p-8 shadow-[0_2px_10px_-4px_oklch(0.64_0.11_12_/_0.16)] transition-shadow hover:shadow-[0_20px_40px_-14px_oklch(0.64_0.11_12_/_0.35)] md:p-12"
+				>
+					<div
+						aria-hidden
+						className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-primary/15 blur-3xl transition-transform duration-700 group-hover:scale-125"
+					/>
+					<div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+						<div>
+							<p className="text-primary text-sm uppercase tracking-[0.2em]">
+								Ne znate odakle da krenete?
+							</p>
+							<h2 className="mt-2 font-serif text-3xl sm:text-4xl">
+								Pronađite svoj ritual za 60 sekundi
+							</h2>
+							<p className="mt-3 max-w-lg text-muted-foreground">
+								Pet kratkih pitanja, a naš asistent sastavlja set od tri
+								proizvoda koji se lepo dopunjuju — od baze do usana.
+							</p>
+						</div>
+						<Button size="lg" className="shrink-0 rounded-full px-8">
+							Započni kviz →
+						</Button>
+					</div>
+				</Link>
+			</div>
+
 			{featuredProducts.length > 0 && (
 				<div className="mx-auto max-w-6xl px-6 pb-24">
 					<div className="mb-8 flex items-end justify-between">
