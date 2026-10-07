@@ -192,21 +192,13 @@ export default function RitualQuiz() {
 	const [loading, setLoading] = useState(false);
 	const [ritual, setRitual] = useState<Ritual | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [elapsed, setElapsed] = useState(0);
+	const [guideLoading, setGuideLoading] = useState(false);
 
 	// Bot na besplatnom hostingu "zaspi" — probudi ga čim se otvori kviz,
 	// da bude spreman kad korisnik odgovori na pitanja.
 	useEffect(() => {
 		fetch(`${CHAT_API}/api/health`).catch(() => {});
 	}, []);
-
-	// brojač sekundi dok se čeka odgovor (za poruke korisniku)
-	useEffect(() => {
-		if (!loading) return;
-		setElapsed(0);
-		const id = window.setInterval(() => setElapsed((s) => s + 1), 1000);
-		return () => window.clearInterval(id);
-	}, [loading]);
 
 	const q = QUESTIONS[step];
 	const progress = ritual ? 100 : Math.round((step / QUESTIONS.length) * 100);
@@ -229,7 +221,9 @@ export default function RitualQuiz() {
 				const body = (await res.json().catch(() => null)) as { detail?: string } | null;
 				throw new Error(body?.detail ?? `Greška ${res.status}`);
 			}
-			setRitual((await res.json()) as Ritual);
+			const data = (await res.json()) as Ritual;
+			setRitual(data);
+			void loadGuide(finalAnswers, data);
 		} catch (e) {
 			setError(
 				e instanceof Error && e.message !== "Failed to fetch"
@@ -238,6 +232,30 @@ export default function RitualQuiz() {
 			);
 		} finally {
 			setLoading(false);
+		}
+	}
+
+	async function loadGuide(finalAnswers: Answers, data: Ritual) {
+		setGuideLoading(true);
+		try {
+			const res = await fetch(`${CHAT_API}/api/ritual/guide`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					...finalAnswers,
+					products: data.products.map(
+						(p) => `${p.step}: ${p.name}${p.variantName ? ` (${p.variantName})` : ""}`,
+					),
+					extras: data.extras.map((p) => p.name),
+				}),
+			});
+			if (!res.ok) return;
+			const g = (await res.json()) as { guide: GuideStep[] };
+			setRitual((cur) => (cur ? { ...cur, guide: g.guide ?? [] } : cur));
+		} catch {
+			// vodič je dodatak — ako ne stigne, proizvodi ostaju prikazani
+		} finally {
+			setGuideLoading(false);
 		}
 	}
 
@@ -299,21 +317,10 @@ export default function RitualQuiz() {
 			{loading && (
 				<div className="fade-in animate-in mt-12 flex flex-col items-center gap-4 py-16 text-center duration-500">
 					<Sparkles className="size-8 animate-pulse text-primary" />
-					<p className="font-serif text-2xl">
-						{elapsed < 10
-							? "Sastavljamo vaš ritual…"
-							: elapsed < 30
-								? "Biramo proizvode za svaku oblast…"
-								: elapsed < 50
-									? "Pišemo vodič korak po korak…"
-									: "Još malo, skoro je gotovo…"}
-					</p>
+					<p className="font-serif text-2xl">Sastavljamo vaš ritual…</p>
 					<p className="text-muted-foreground text-sm">
-						{elapsed < 30
-							? "Biramo proizvod za svaku oblast, dodatne preporuke i pribor."
-							: "Asistent pažljivo sastavlja ceo look — ovo može potrajati do minut."}
+						Biramo proizvode koji odgovaraju vašim odgovorima.
 					</p>
-					<p className="text-muted-foreground/60 text-xs tabular-nums">{elapsed}s</p>
 				</div>
 			)}
 
@@ -471,6 +478,15 @@ export default function RitualQuiz() {
 									<ProductRow key={`${p.productId}:${p.variantId ?? ""}`} p={p} index={i} onAdd={addOne} />
 								))}
 							</div>
+						</div>
+					)}
+
+					{/* vodič se učitava posle proizvoda */}
+					{guideLoading && ritual.guide.length === 0 && (
+						<div className="mt-16 flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border py-10 text-center">
+							<Wand2 className="size-6 animate-pulse text-primary" />
+							<p className="font-serif text-xl">Pišemo vodič kroz ceo look…</p>
+							<p className="text-muted-foreground text-sm">Proizvode već možete dodati u korpu.</p>
 						</div>
 					)}
 
