@@ -1,6 +1,5 @@
 import { db } from "@web-shop/db";
 import { product, promo } from "@web-shop/db/schema";
-import { env } from "@web-shop/env/server";
 import { Button } from "@web-shop/ui/components/button";
 import { asc, desc, eq } from "drizzle-orm";
 import {
@@ -16,7 +15,8 @@ import Link from "next/link";
 
 import ProductCard from "@/components/product-card";
 
-const DECOR_LIPSTICK_SMEAR = `${env.MINIO_PUBLIC_URL}/${env.MINIO_BUCKET}/decor/lipstick-smear.jpg`;
+// dekor slike su u apps/web/public/product-images/decor (sluzi ih sam sajt)
+const DECOR_LIPSTICK_SMEAR = "/product-images/decor/lipstick-smear.jpg";
 
 const WHY_HIGH_END = [
 	{
