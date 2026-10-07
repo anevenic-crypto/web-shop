@@ -12,7 +12,7 @@ import {
 	Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 import { addToCart } from "@/lib/cart";
@@ -192,6 +192,21 @@ export default function RitualQuiz() {
 	const [loading, setLoading] = useState(false);
 	const [ritual, setRitual] = useState<Ritual | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [elapsed, setElapsed] = useState(0);
+
+	// Bot na besplatnom hostingu "zaspi" — probudi ga čim se otvori kviz,
+	// da bude spreman kad korisnik odgovori na pitanja.
+	useEffect(() => {
+		fetch(`${CHAT_API}/api/health`).catch(() => {});
+	}, []);
+
+	// brojač sekundi dok se čeka odgovor (za poruke korisniku)
+	useEffect(() => {
+		if (!loading) return;
+		setElapsed(0);
+		const id = window.setInterval(() => setElapsed((s) => s + 1), 1000);
+		return () => window.clearInterval(id);
+	}, [loading]);
 
 	const q = QUESTIONS[step];
 	const progress = ritual ? 100 : Math.round((step / QUESTIONS.length) * 100);
@@ -200,11 +215,16 @@ export default function RitualQuiz() {
 		setLoading(true);
 		setError(null);
 		try {
-			const res = await fetch(`${CHAT_API}/api/ritual`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(finalAnswers),
-			});
+			const call = () =>
+				fetch(`${CHAT_API}/api/ritual`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(finalAnswers),
+				});
+			// ako prvi pokušaj padne (bot se još budi), sačekaj 3 s i probaj još jednom
+			const res = await call().catch(
+				() => new Promise<Response>((r) => setTimeout(() => r(call()), 3000)),
+			);
 			if (!res.ok) {
 				const body = (await res.json().catch(() => null)) as { detail?: string } | null;
 				throw new Error(body?.detail ?? `Greška ${res.status}`);
@@ -279,10 +299,21 @@ export default function RitualQuiz() {
 			{loading && (
 				<div className="fade-in animate-in mt-12 flex flex-col items-center gap-4 py-16 text-center duration-500">
 					<Sparkles className="size-8 animate-pulse text-primary" />
-					<p className="font-serif text-2xl">Sastavljamo vaš ritual…</p>
-					<p className="text-muted-foreground text-sm">
-						Biramo proizvod za svaku oblast, dodatne preporuke i pribor.
+					<p className="font-serif text-2xl">
+						{elapsed < 10
+							? "Sastavljamo vaš ritual…"
+							: elapsed < 30
+								? "Biramo proizvode za svaku oblast…"
+								: elapsed < 50
+									? "Pišemo vodič korak po korak…"
+									: "Još malo, skoro je gotovo…"}
 					</p>
+					<p className="text-muted-foreground text-sm">
+						{elapsed < 30
+							? "Biramo proizvod za svaku oblast, dodatne preporuke i pribor."
+							: "Asistent pažljivo sastavlja ceo look — ovo može potrajati do minut."}
+					</p>
+					<p className="text-muted-foreground/60 text-xs tabular-nums">{elapsed}s</p>
 				</div>
 			)}
 
