@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Badge } from "@web-shop/ui/components/badge";
+import { Button } from "@web-shop/ui/components/button";
 import {
 	Select,
 	SelectContent,
@@ -34,6 +35,18 @@ export default function OrdersManager() {
 					queryKey: trpc.orders.list.queryKey(),
 				});
 			},
+		}),
+	);
+
+	const removeOrder = useMutation(
+		trpc.orders.remove.mutationOptions({
+			onSuccess: () => {
+				toast.success("Porudžbina obrisana");
+				queryClient.invalidateQueries({
+					queryKey: trpc.orders.list.queryKey(),
+				});
+			},
+			onError: () => toast.error("Brisanje nije uspelo"),
 		}),
 	);
 
@@ -88,6 +101,19 @@ export default function OrdersManager() {
 									))}
 								</SelectContent>
 							</Select>
+							<Button
+								variant="outline"
+								size="sm"
+								className="text-destructive"
+								disabled={removeOrder.isPending}
+								onClick={() => {
+									if (window.confirm(`Obrisati porudžbinu od ${o.customerName}?`)) {
+										removeOrder.mutate({ id: o.id });
+									}
+								}}
+							>
+								Obriši
+							</Button>
 						</div>
 					</div>
 					<div className="mt-4 space-y-1 border-t pt-4 text-sm">

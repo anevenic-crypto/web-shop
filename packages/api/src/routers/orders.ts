@@ -101,4 +101,17 @@ export const ordersRouter = router({
 			}
 			return updated;
 		}),
+
+	remove: adminProcedure
+		.input(z.object({ id: z.string() }))
+		.mutation(async ({ input }) => {
+			const [deleted] = await db
+				.delete(order)
+				.where(eq(order.id, input.id))
+				.returning({ id: order.id });
+			if (!deleted) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" });
+			}
+			return deleted;
+		}),
 });
