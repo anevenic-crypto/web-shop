@@ -26,6 +26,19 @@ type OrderMail = {
 // (Resend tada dozvoljava slanje SAMO na mejl kojim si se registrovala).
 const FROM = "Vellure <onboarding@resend.dev>";
 
+/** Čista tekstualna verzija mejla — mejlovi bez text dela češće završe u spamu. */
+function itemsText(order: OrderMail) {
+	const lines = order.items.map(
+		(item) =>
+			`- ${item.name}${item.variantName ? ` — ${item.variantName}` : ""} × ${item.quantity}: ${formatRsd(item.priceRsd * item.quantity)}`,
+	);
+	const subtotal = order.totalRsd - order.shippingRsd;
+	lines.push(`Proizvodi: ${formatRsd(subtotal)}`);
+	lines.push(`Dostava: ${order.shippingRsd ? formatRsd(order.shippingRsd) : "besplatna"}`);
+	lines.push(`Ukupno za plaćanje: ${formatRsd(order.totalRsd)}`);
+	return lines.join("\n");
+}
+
 function escapeHtml(s: string) {
 	return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c);
 }
@@ -56,7 +69,9 @@ export async function notifyNewOrder(order: OrderMail) {
 		await resend.emails.send({
 			from: FROM,
 			to: env.ORDER_NOTIFICATION_EMAIL,
+			...(order.email ? { replyTo: order.email } : {}),
 			subject: `Nova porudžbina — ${order.customerName} (${formatRsd(order.totalRsd)})`,
+			text: `Nova porudžbina na Vellure\n\n${order.customerName}\n${order.phone}\n${order.address}${order.email ? `\n${order.email}` : ""}\n${order.note ? `\nNapomena: ${order.note}\n` : ""}\n${itemsText(order)}\n\nBroj porudžbine: ${order.id}`,
 			html: `
 				<h2>Nova porudžbina na Vellure</h2>
 				<p><strong>${escapeHtml(order.customerName)}</strong><br/>
@@ -83,7 +98,9 @@ export async function sendOrderConfirmation(order: OrderMail) {
 		await resend.emails.send({
 			from: FROM,
 			to: order.email,
+			...(env.ORDER_NOTIFICATION_EMAIL ? { replyTo: env.ORDER_NOTIFICATION_EMAIL } : {}),
 			subject: `Vellure — primili smo vašu porudžbinu #${kratkiBroj}`,
+			text: `Hvala, ${order.customerName}!\n\nPrimili smo vašu porudžbinu #${kratkiBroj}. Pozvaćemo vas na ${order.phone} da potvrdimo detalje i dogovorimo dostavu na adresu:\n${order.address}\n\n${itemsText(order)}\n\nPlaćanje je pouzećem — plaćate kuriru pri preuzimanju.${order.shippingRsd ? "" : " Dostava je besplatna."}\nAko nešto nije u redu sa porudžbinom, odgovorite na ovaj mejl.`,
 			html: `
 				<div style="font-family:Georgia,serif;max-width:520px">
 				<h2 style="font-weight:normal">Hvala, ${escapeHtml(order.customerName.split(" ")[0] || order.customerName)}!</h2>
