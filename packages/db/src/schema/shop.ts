@@ -113,6 +113,8 @@ export const order = pgTable("order", {
 	phone: text("phone").notNull(),
 	address: text("address").notNull(),
 	note: text("note"),
+	email: text("email"),                                   // za potvrdu kupcu (opciono)
+	shippingRsd: integer("shipping_rsd").default(0).notNull(), // cena dostave uracunata u total
 	totalRsd: integer("total_rsd").notNull(),
 	status: text("status").default("novo").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),

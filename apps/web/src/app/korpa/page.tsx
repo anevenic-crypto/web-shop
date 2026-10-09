@@ -19,6 +19,7 @@ import {
 	updateCartQuantity,
 } from "@/lib/cart";
 import { trpc } from "@/utils/trpc";
+import { FREE_SHIPPING_FROM_RSD, shippingFor } from "@web-shop/api/lib/shipping";
 
 function formatRsd(price: number) {
 	return `${price.toLocaleString("sr-RS")} RSD`;
@@ -31,6 +32,7 @@ export default function KorpaPage() {
 		customerName: "",
 		phone: "",
 		address: "",
+		email: "",
 		note: "",
 	});
 
@@ -56,10 +58,12 @@ export default function KorpaPage() {
 		return null;
 	}
 
-	const total = items.reduce(
+	const subtotal = items.reduce(
 		(sum, item) => sum + item.quantity * item.priceRsd,
 		0,
 	);
+	const shipping = shippingFor(subtotal);
+	const total = subtotal + shipping;
 
 	if (orderId) {
 		return (
@@ -70,6 +74,10 @@ export default function KorpaPage() {
 					<p className="mt-3 text-muted-foreground">
 						Javićemo vam se uskoro na broj koji ste ostavili da potvrdimo
 						detalje i dogovorimo dostavu.
+						{form.email ? " Potvrdu smo poslali i na vaš mejl." : ""}
+					</p>
+					<p className="mt-2 text-muted-foreground text-xs">
+						Broj porudžbine: {orderId.slice(0, 8).toUpperCase()}
 					</p>
 					<Link href="/prodavnica">
 						<Button className="mt-8 rounded-full px-6">Nastavi kupovinu</Button>
@@ -148,11 +156,27 @@ export default function KorpaPage() {
 							</div>
 						))}
 
-						<div className="flex items-center justify-between border-t pt-6">
-							<p className="font-serif text-xl">Ukupno</p>
-							<p className="font-semibold text-primary text-xl">
-								{formatRsd(total)}
-							</p>
+						<div className="space-y-2 border-t pt-6">
+							<div className="flex items-center justify-between text-muted-foreground text-sm">
+								<p>Proizvodi</p>
+								<p>{formatRsd(subtotal)}</p>
+							</div>
+							<div className="flex items-center justify-between text-muted-foreground text-sm">
+								<p>Dostava</p>
+								<p>{shipping === 0 ? "besplatna" : formatRsd(shipping)}</p>
+							</div>
+							{shipping > 0 && (
+								<p className="text-muted-foreground text-xs">
+									Besplatna dostava za porudžbine preko {formatRsd(FREE_SHIPPING_FROM_RSD)} — nedostaje
+									još {formatRsd(FREE_SHIPPING_FROM_RSD - subtotal)}.
+								</p>
+							)}
+							<div className="flex items-center justify-between pt-2">
+								<p className="font-serif text-xl">Ukupno za plaćanje</p>
+								<p className="font-semibold text-primary text-xl">
+									{formatRsd(total)}
+								</p>
+							</div>
 						</div>
 
 						<form
@@ -163,6 +187,7 @@ export default function KorpaPage() {
 									phone: form.phone,
 									address: form.address,
 									note: form.note || undefined,
+									email: form.email || undefined,
 									items: items.map((item) => ({
 										productId: item.productId,
 										name: item.name,
@@ -176,8 +201,8 @@ export default function KorpaPage() {
 						>
 							<h2 className="font-serif text-xl">Podaci za porudžbinu</h2>
 							<p className="text-muted-foreground text-sm">
-								Plaćanje pouzećem ili po dogovoru — kontaktiraćemo vas telefonom
-								da potvrdimo porudžbinu i dostavu.
+								Plaćanje pouzećem (kuriru pri preuzimanju). Kontaktiraćemo vas
+								telefonom da potvrdimo porudžbinu i dostavu.
 							</p>
 
 							<div className="space-y-2">
@@ -209,6 +234,16 @@ export default function KorpaPage() {
 									onChange={(e) =>
 										setForm({ ...form, address: e.target.value })
 									}
+								/>
+							</div>
+							<div className="space-y-2">
+								<Label htmlFor="email">Mejl (opciono — za potvrdu porudžbine)</Label>
+								<Input
+									id="email"
+									type="email"
+									autoComplete="email"
+									value={form.email}
+									onChange={(e) => setForm({ ...form, email: e.target.value })}
 								/>
 							</div>
 							<div className="space-y-2">

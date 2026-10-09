@@ -5,7 +5,8 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { adminProcedure, publicProcedure, router } from "../index";
-import { notifyNewOrder } from "../lib/notify-order";
+import { notifyNewOrder, sendOrderConfirmation } from "../lib/notify-order";
+import { shippingFor } from "../lib/shipping";
 
 const orderItemInput = z.object({
 	productId: z.string().optional(),
@@ -23,14 +24,18 @@ export const ordersRouter = router({
 				phone: z.string().min(3).max(50),
 				address: z.string().min(1).max(500),
 				note: z.string().max(1000).optional(),
+				email: z.email().max(200).optional().or(z.literal("")),
 				items: z.array(orderItemInput).min(1),
 			}),
 		)
 		.mutation(async ({ input }) => {
-			const totalRsd = input.items.reduce(
+			const subtotalRsd = input.items.reduce(
 				(sum, item) => sum + item.priceRsd * item.quantity,
 				0,
 			);
+			const shippingRsd = shippingFor(subtotalRsd);
+			const totalRsd = subtotalRsd + shippingRsd;
+			const email = input.email?.trim() || null;
 
 			const [created] = await db
 				.insert(order)
@@ -39,6 +44,8 @@ export const ordersRouter = router({
 					phone: input.phone,
 					address: input.address,
 					note: input.note || null,
+					email,
+					shippingRsd,
 					totalRsd,
 				})
 				.returning();
@@ -54,18 +61,22 @@ export const ordersRouter = router({
 				})),
 			);
 
-			await notifyNewOrder({
+			const mailData = {
 				id: created.id,
 				customerName: created.customerName,
 				phone: created.phone,
 				address: created.address,
 				note: created.note,
+				email,
+				shippingRsd,
 				totalRsd: created.totalRsd,
 				items: input.items.map((item) => ({
 					...item,
 					variantName: item.variantName ?? null,
 				})),
-			});
+			};
+			// mejlovi ne smeju da obore porudzbinu — salju se paralelno, greske se samo loguju
+			await Promise.all([notifyNewOrder(mailData), sendOrderConfirmation(mailData)]);
 
 			return { id: created.id };
 		}),

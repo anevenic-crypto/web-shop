@@ -59,6 +59,9 @@ export default function OrdersManager() {
 							<p className="font-medium">{o.customerName}</p>
 							<p className="text-muted-foreground text-sm">{o.phone}</p>
 							<p className="text-muted-foreground text-sm">{o.address}</p>
+							{o.email && (
+								<p className="text-muted-foreground text-sm">{o.email}</p>
+							)}
 							{o.note && (
 								<p className="mt-1 text-muted-foreground text-xs">"{o.note}"</p>
 							)}
