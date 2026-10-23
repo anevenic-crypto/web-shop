@@ -56,3 +56,11 @@ coverage
 .cache
 tmp
 temp
+
+# tajne veze ka bazama
+scripts/veze.txt
+scripts/dump-neon.sql
+scripts/supabase-*.txt
+scripts/supabase-*.log
+scripts/.env.txt
+scripts/*.env*
